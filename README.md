@@ -1,2 +1,2 @@
-# xt_RTS
-xtables: Return To Sender (in an IP-in-IP packet) for testing iptables rulesets
+# xt_SDNAT
+SNAT + DNAT in one rule!
