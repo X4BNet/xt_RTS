@@ -5,6 +5,7 @@
 #include <xtables.h>
 #include <limits.h> /* INT_MAX in ip_tables.h */
 #include <linux/netfilter/nf_nat.h>
+#include <arpa/inet.h>
 #include "libxt_rts.h"
 
 enum {
@@ -47,7 +48,7 @@ static void rts_print(const void *ip, const struct xt_entry_target *target,
 	const struct xt_rts *info = (void *) target->data;
 	printf(" RTS");
 	if(info->dst_override){
-		printf(" %s", inet_ntoa(info->dst_override));
+		printf(" %s", inet_ntoa(*(struct in_addr *)&info->dst_override));
 	}
 }
 
@@ -56,7 +57,7 @@ static void rts_save(const void *ip, const struct xt_entry_target *target)
 	const struct xt_rts *info = (void *) target->data;
 
 	if(info->dst_override){
-		printf("--rts-dst %s", inet_ntoa(info->dst_override));
+		printf("--rts-dst %s", inet_ntoa(*(struct in_addr *)&info->dst_override));
 	}
 }
 
