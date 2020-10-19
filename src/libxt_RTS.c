@@ -47,7 +47,7 @@ static void rts_print(const void *ip, const struct xt_entry_target *target,
 	const struct xt_rts *info = (void *) target->data;
 	printf(" RTS");
 	if(info->dst_override){
-		printf(" %pI4n", &info->dst_override);
+		printf(" %s", inet_ntoa(info->dst_override));
 	}
 }
 
@@ -56,7 +56,7 @@ static void rts_save(const void *ip, const struct xt_entry_target *target)
 	const struct xt_rts *info = (void *) target->data;
 
 	if(info->dst_override){
-		printf("--rts-dst %pI4n", &info->dst_override);
+		printf("--rts-dst %s", inet_ntoa(info->dst_override));
 	}
 }
 
