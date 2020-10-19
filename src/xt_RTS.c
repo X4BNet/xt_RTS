@@ -12,7 +12,7 @@
 #include <net/ip.h>
 #include <linux/netfilter/x_tables.h>
 #include <linux/netfilter_ipv4/ip_tables.h>
-
+#include "libxt_rts.h"
 #include <net/netfilter/nf_conntrack.h>
 
 /*
@@ -32,6 +32,7 @@ static void build_ethhdr(const struct sk_buff *skb_source, struct sk_buff *skb_t
 static unsigned int
 xt_rts_target(struct sk_buff *inskb, const struct xt_action_param *par)
 {
+	const struct xt_rts *info = (void *) par->targinfo;
 	struct iphdr *iphdst, *iphsrc = ip_hdr(inskb);
 	struct net* net = dev_net(inskb->dev);
 	u8* pdst;
@@ -80,8 +81,12 @@ xt_rts_target(struct sk_buff *inskb, const struct xt_action_param *par)
 	iphdst->ihl = sizeof(struct iphdr)/4;
 	iphdst->id = iphsrc->id;
 	iphdst->protocol = 4;
-	iphdst->daddr = iphsrc->saddr;
-	iphdst->saddr = iphsrc->daddr;
+	iphdst->saddr = iphsrc->daddr;	
+	if(info->dst_override){
+		iphdst->daddr = info->dst_override;
+	}else{
+		iphdst->daddr = iphsrc->saddr;
+	}
 	iphdst->tot_len = htons(ntohs(iphsrc->tot_len) + sizeof(struct iphdr));
 	iphdst->ttl     = 100;
 	ip_send_check (iphdst); /* handles check = 0 */
@@ -109,7 +114,7 @@ static struct xt_target xt_nat_target_reg[] __read_mostly = {
 		.name		= "RTS",
 		.revision	= 0,
 		.target		= xt_rts_target,
-		.targetsize	= 0,
+		.targetsize	= sizeof(struct xt_rts),
 		.hooks		= (1 << NF_INET_PRE_ROUTING) |
 				  (1 << NF_INET_LOCAL_IN) |
 				  (1 << NF_INET_LOCAL_OUT),
