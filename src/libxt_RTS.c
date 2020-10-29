@@ -57,7 +57,7 @@ static void rts_save(const void *ip, const struct xt_entry_target *target)
 	const struct xt_rts *info = (void *) target->data;
 
 	if(info->dst_override){
-		printf("--rts-dst %s", inet_ntoa(*(struct in_addr *)&info->dst_override));
+		printf(" --rts-dst %s", inet_ntoa(*(struct in_addr *)&info->dst_override));
 	}
 }
 
