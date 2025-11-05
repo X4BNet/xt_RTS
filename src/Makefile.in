@@ -43,7 +43,7 @@ libxt_RTS_sh.o: libxt_RTS.c
 
 
 %.so: %_sh.o
-	gcc -shared -lxtables -o $@ $<
+	gcc -shared -o $@ $< -lxtables
 
 linstall: | libxt_RTS.so
 	@echo " *"
