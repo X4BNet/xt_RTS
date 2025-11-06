@@ -75,6 +75,9 @@ static struct xtables_target rts_tg_reg = {
 	.save = rts_save
 };
 
+#ifndef _init
+#define _init __attribute__((constructor)) _INIT
+#endif
 void _init(void)
 {
 	xtables_register_target(&rts_tg_reg);
