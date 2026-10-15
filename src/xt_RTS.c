@@ -8,6 +8,7 @@
 
 #include <linux/module.h>
 #include <linux/skbuff.h>
+#include <linux/etherdevice.h>
 #include <linux/netfilter.h>
 #include <net/ip.h>
 #include <linux/netfilter/x_tables.h>
@@ -34,7 +35,6 @@ xt_rts_target(struct sk_buff *inskb, const struct xt_action_param *par)
 {
 	const struct xt_rts *info = (void *) par->targinfo;
 	struct iphdr *iphdst, *iphsrc = ip_hdr(inskb);
-	struct net* net = dev_net(inskb->dev);
 	u8* pdst;
 	int err;
 	struct sk_buff *skb;
@@ -47,7 +47,7 @@ xt_rts_target(struct sk_buff *inskb, const struct xt_action_param *par)
 
 	pkt_size = LL_MAX_HEADER + ntohs(iphsrc->tot_len) + sizeof(struct iphdr);
 	if(pkt_size > 1600){
-		pr_warn("pkt too big", pkt_size);
+		pr_warn("pkt too big: %u\n", pkt_size);
 		return XT_CONTINUE;
 	}
 
@@ -138,5 +138,6 @@ module_exit(xt_nat_exit);
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Mathew Heard <mheard@x4b.net>");
+MODULE_DESCRIPTION("Xtables return-to-source encapsulation target");
 MODULE_ALIAS("ipt_RTS");;
 MODULE_ALIAS("ip6t_RTS");
